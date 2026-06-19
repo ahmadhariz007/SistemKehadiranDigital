@@ -1,291 +1,278 @@
-import React, { useState } from 'react';
-import { Rocket, User, Users, GraduationCap, School, ChevronDown, CheckCircle2 } from 'lucide-react';
-
-export default function App() {
-  const [formData, setFormData] = useState({
-    nama: '',
-    kategori: '',
-    subKategori: '',
-    umur: ''
-  });
-
-  const [senaraiKehadiran, setSenaraiKehadiran] = useState([]);
-  const [statusBerjaya, setStatusBerjaya] = useState(false);
-
-  // Senarai Pilihan
-  const pilihanRendah = ["Tahun 1", "Tahun 2", "Tahun 3", "Tahun 4", "Tahun 5", "Tahun 6"];
-  const pilihanMenengah = ["Tingkatan 1", "Tingkatan 2", "Tingkatan 3", "Tingkatan 4", "Tingkatan 5"];
-  const pilihanUniversiti = ["Pra U", "Matriks", "Asasi", "Diploma", "Degree", "Master", "PhD"];
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Kehadiran Digital</title>
     
-    // Jika tukar kategori, reset subKategori dan umur
-    if (name === 'kategori') {
-      setFormData({
-        ...formData,
-        kategori: value,
-        subKategori: '',
-        umur: ''
-      });
-    } else {
-      setFormData({
-        ...formData,
-        [name]: value
-      });
-    }
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
+    <!-- Memuatkan Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
     
-    // Dapatkan tarikh dan masa semasa
-    const masaSemasa = new Date().toLocaleString('ms-MY');
-
-    const rekodBaru = {
-      ...formData,
-      tarikhMasa: masaSemasa,
-      id: Date.now()
-    };
-
-    setSenaraiKehadiran([rekodBaru, ...senaraiKehadiran]);
+    <!-- Memuatkan React dan ReactDOM -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
     
-    // Tunjuk mesej berjaya dan reset borang
-    setStatusBerjaya(true);
-    setFormData({ nama: '', kategori: '', subKategori: '', umur: '' });
-    
-    setTimeout(() => {
-      setStatusBerjaya(false);
-    }, 3000);
-  };
+    <!-- Memuatkan Babel untuk menterjemah kod React (JSX) di dalam browser (Versi stabil untuk file://) -->
+    <script src="https://unpkg.com/@babel/standalone@7.23.8/babel.min.js"></script>
 
-  return (
-    <div className="min-h-screen bg-slate-900 text-slate-100 font-sans p-6 relative overflow-hidden flex flex-col items-center">
-      {/* Latar Belakang Angkasa - Hiasan CSS */}
-      <div className="absolute top-[-10%] left-[-10%] w-96 h-96 bg-blue-600/20 rounded-full blur-3xl pointer-events-none"></div>
-      <div className="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-purple-600/20 rounded-full blur-3xl pointer-events-none"></div>
-      
-      {/* Header */}
-      <div className="text-center mb-8 z-10 pt-8">
-        <div className="flex justify-center mb-4">
-          <div className="bg-indigo-600 p-4 rounded-full shadow-lg shadow-indigo-500/50 animate-bounce">
-            <Rocket className="w-8 h-8 text-white" />
-          </div>
-        </div>
-        <h1 className="text-3xl md:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400">
-          Sistem Kehadiran Digital
-        </h1>
-        <p className="text-slate-400 mt-2 text-lg">Misi Eksplorasi Balai Cerap Maya</p>
-      </div>
-
-      <div className="w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-8 z-10">
-        
-        {/* Kad Borang Kehadiran */}
-        <div className="bg-slate-800/50 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6 shadow-2xl">
-          <h2 className="text-xl font-semibold mb-6 flex items-center border-b border-slate-700 pb-3">
-            <User className="w-5 h-5 mr-2 text-blue-400" />
-            Daftar Masuk
-          </h2>
-
-          {statusBerjaya && (
-            <div className="bg-emerald-500/20 border border-emerald-500/50 text-emerald-400 p-4 rounded-lg mb-6 flex items-center">
-              <CheckCircle2 className="w-5 h-5 mr-2" />
-              Kehadiran berjaya direkodkan!
-            </div>
-          )}
-
-          <form onSubmit={handleSubmit} className="space-y-5">
-            {/* Nama Input */}
-            <div>
-              <label className="block text-sm font-medium text-slate-300 mb-1">Nama Penuh</label>
-              <input
-                type="text"
-                name="nama"
-                required
-                value={formData.nama}
-                onChange={handleChange}
-                placeholder="Taip nama anda di sini..."
-                className="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-              />
-            </div>
-
-            {/* Kategori Dropdown */}
-            <div>
-              <label className="block text-sm font-medium text-slate-300 mb-1">Kategori</label>
-              <div className="relative">
-                <select
-                  name="kategori"
-                  required
-                  value={formData.kategori}
-                  onChange={handleChange}
-                  className="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                >
-                  <option value="" disabled>-- Pilih Kategori --</option>
-                  <option value="Sekolah Rendah">Sekolah Rendah</option>
-                  <option value="Sekolah Menengah">Sekolah Menengah</option>
-                  <option value="Universiti">Universiti</option>
-                  <option value="Orang Awam">Orang Awam</option>
-                </select>
-                <ChevronDown className="absolute right-3 top-3.5 w-5 h-5 text-slate-400 pointer-events-none" />
-              </div>
-            </div>
-
-            {/* Sub-Kategori Dinamik */}
-            
-            {/* Logik: Sekolah Rendah */}
-            {formData.kategori === 'Sekolah Rendah' && (
-              <div className="animate-in fade-in slide-in-from-top-2 duration-300">
-                <label className="block text-sm font-medium text-slate-300 mb-1 flex items-center">
-                  <School className="w-4 h-4 mr-1 text-yellow-400" /> Tahun
-                </label>
-                <div className="relative">
-                  <select
-                    name="subKategori"
-                    required
-                    value={formData.subKategori}
-                    onChange={handleChange}
-                    className="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
-                  >
-                    <option value="" disabled>-- Pilih Tahun --</option>
-                    {pilihanRendah.map(tahun => <option key={tahun} value={tahun}>{tahun}</option>)}
-                  </select>
-                  <ChevronDown className="absolute right-3 top-3.5 w-5 h-5 text-slate-400 pointer-events-none" />
-                </div>
-              </div>
-            )}
-
-            {/* Logik: Sekolah Menengah */}
-            {formData.kategori === 'Sekolah Menengah' && (
-              <div className="animate-in fade-in slide-in-from-top-2 duration-300">
-                <label className="block text-sm font-medium text-slate-300 mb-1 flex items-center">
-                  <School className="w-4 h-4 mr-1 text-blue-400" /> Tingkatan
-                </label>
-                <div className="relative">
-                  <select
-                    name="subKategori"
-                    required
-                    value={formData.subKategori}
-                    onChange={handleChange}
-                    className="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
-                  >
-                    <option value="" disabled>-- Pilih Tingkatan --</option>
-                    {pilihanMenengah.map(ting => <option key={ting} value={ting}>{ting}</option>)}
-                  </select>
-                  <ChevronDown className="absolute right-3 top-3.5 w-5 h-5 text-slate-400 pointer-events-none" />
-                </div>
-              </div>
-            )}
-
-            {/* Logik: Universiti */}
-            {formData.kategori === 'Universiti' && (
-              <div className="animate-in fade-in slide-in-from-top-2 duration-300">
-                <label className="block text-sm font-medium text-slate-300 mb-1 flex items-center">
-                  <GraduationCap className="w-4 h-4 mr-1 text-purple-400" /> Peringkat Pengajian
-                </label>
-                <div className="relative">
-                  <select
-                    name="subKategori"
-                    required
-                    value={formData.subKategori}
-                    onChange={handleChange}
-                    className="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
-                  >
-                    <option value="" disabled>-- Pilih Peringkat --</option>
-                    {pilihanUniversiti.map(peringkat => <option key={peringkat} value={peringkat}>{peringkat}</option>)}
-                  </select>
-                  <ChevronDown className="absolute right-3 top-3.5 w-5 h-5 text-slate-400 pointer-events-none" />
-                </div>
-              </div>
-            )}
-
-            {/* Logik: Orang Awam */}
-            {formData.kategori === 'Orang Awam' && (
-              <div className="animate-in fade-in slide-in-from-top-2 duration-300">
-                <label className="block text-sm font-medium text-slate-300 mb-1 flex items-center">
-                  <Users className="w-4 h-4 mr-1 text-emerald-400" /> Umur
-                </label>
-                <input
-                  type="number"
-                  name="umur"
-                  required
-                  min="1"
-                  max="120"
-                  value={formData.umur}
-                  onChange={handleChange}
-                  placeholder="Masukkan umur anda..."
-                  className="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
-                />
-              </div>
-            )}
-
-            {/* Butang Hantar */}
-            <button
-              type="submit"
-              className="w-full mt-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-semibold py-3 px-6 rounded-lg shadow-lg hover:shadow-indigo-500/25 transition-all duration-200 flex justify-center items-center group"
-            >
-              Hantar Kehadiran
-              <Rocket className="w-5 h-5 ml-2 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
-            </button>
-          </form>
-        </div>
-
-        {/* Kad Rekod Kehadiran */}
-        <div className="bg-slate-800/50 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6 shadow-2xl flex flex-col h-[500px]">
-          <h2 className="text-xl font-semibold mb-6 flex items-center border-b border-slate-700 pb-3">
-            <Users className="w-5 h-5 mr-2 text-purple-400" />
-            Rekod Pelawat Misi ({senaraiKehadiran.length})
-          </h2>
-          
-          <div className="flex-1 overflow-y-auto pr-2 space-y-3 custom-scrollbar">
-            {senaraiKehadiran.length === 0 ? (
-              <div className="h-full flex flex-col items-center justify-center text-slate-500">
-                <div className="text-4xl mb-3">🛰️</div>
-                <p>Belum ada pelawat direkodkan.</p>
-              </div>
-            ) : (
-              senaraiKehadiran.map((rekod) => (
-                <div key={rekod.id} className="bg-slate-900/80 border border-slate-700 rounded-lg p-4 hover:border-slate-500 transition-colors">
-                  <div className="flex justify-between items-start mb-1">
-                    <h3 className="font-semibold text-white">{rekod.nama}</h3>
-                    <span className="text-xs text-slate-400">{rekod.tarikhMasa.split(', ')[1]}</span>
-                  </div>
-                  <div className="flex items-center gap-2 mt-2">
-                    <span className={`text-xs px-2 py-1 rounded-full font-medium ${
-                      rekod.kategori === 'Sekolah Rendah' ? 'bg-yellow-500/20 text-yellow-300' :
-                      rekod.kategori === 'Sekolah Menengah' ? 'bg-blue-500/20 text-blue-300' :
-                      rekod.kategori === 'Universiti' ? 'bg-purple-500/20 text-purple-300' :
-                      'bg-emerald-500/20 text-emerald-300'
-                    }`}>
-                      {rekod.kategori}
-                    </span>
-                    <span className="text-xs text-slate-300 bg-slate-800 px-2 py-1 rounded-full border border-slate-700">
-                      {rekod.kategori === 'Orang Awam' ? `${rekod.umur} Tahun` : rekod.subKategori}
-                    </span>
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
-        </div>
-
-      </div>
-
-      <style>{`
+    <!-- Gaya CSS untuk Scrollbar -->
+    <style>
         .custom-scrollbar::-webkit-scrollbar {
-          width: 6px;
+            width: 6px;
         }
         .custom-scrollbar::-webkit-scrollbar-track {
-          background: rgba(30, 41, 59, 0.5); 
-          border-radius: 8px;
+            background: rgba(30, 41, 59, 0.5); 
+            border-radius: 8px;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: rgba(71, 85, 105, 0.8); 
-          border-radius: 8px;
+            background: rgba(71, 85, 105, 0.8); 
+            border-radius: 8px;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: rgba(100, 116, 139, 1); 
+            background: rgba(100, 116, 139, 1); 
         }
-      `}</style>
-    </div>
-  );
-}
+    </style>
+</head>
+<body class="bg-slate-900 m-0 p-0 font-sans text-slate-100">
+    <div id="root"></div>
+
+    <script type="text/babel" data-presets="react,env">
+        const { useState } = React;
+
+        // Ikon dalam bentuk SVG (menggantikan lucide-react)
+        const Rocket = ({ className }) => (<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg>);
+        const User = ({ className }) => (<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>);
+        const Users = ({ className }) => (<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>);
+        const GraduationCap = ({ className }) => (<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M21.42 10.922a2 2 0 0 0-.019-3.838L12.83 4.34a2 2 0 0 0-1.66 0L2.6 7.08a2 2 0 0 0 0 3.832l8.57 2.74a2 2 0 0 0 1.66 0z"/><path d="M22 10v6"/><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/></svg>);
+        const School = ({ className }) => (<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 4 2v8a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-8l4-2"/><path d="M18 5v17"/><path d="m4 6 8-4 8 4"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg>);
+        const ChevronDown = ({ className }) => (<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="m6 9 6 6 6-6"/></svg>);
+        const CheckCircle2 = ({ className }) => (<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="m9 12 2 2 4-4"/></svg>);
+
+        function App() {
+          const [formData, setFormData] = useState({
+            nama: '',
+            kategori: '',
+            subKategori: '',
+            umur: ''
+          });
+
+          const [senaraiKehadiran, setSenaraiKehadiran] = useState([]);
+          const [statusBerjaya, setStatusBerjaya] = useState(false);
+
+          const pilihanRendah = ["Tahun 1", "Tahun 2", "Tahun 3", "Tahun 4", "Tahun 5", "Tahun 6"];
+          const pilihanMenengah = ["Tingkatan 1", "Tingkatan 2", "Tingkatan 3", "Tingkatan 4", "Tingkatan 5"];
+          const pilihanUniversiti = ["Pra U", "Matriks", "Asasi", "Diploma", "Degree", "Master", "PhD"];
+
+          const handleChange = (e) => {
+            const { name, value } = e.target;
+            
+            if (name === 'kategori') {
+              setFormData({ ...formData, kategori: value, subKategori: '', umur: '' });
+            } else {
+              setFormData({ ...formData, [name]: value });
+            }
+          };
+
+          const handleSubmit = (e) => {
+            e.preventDefault();
+            
+            const masaSemasa = new Date().toLocaleString('ms-MY');
+
+            const rekodBaru = {
+              ...formData,
+              tarikhMasa: masaSemasa,
+              id: Date.now()
+            };
+
+            setSenaraiKehadiran([rekodBaru, ...senaraiKehadiran]);
+            
+            setStatusBerjaya(true);
+            setFormData({ nama: '', kategori: '', subKategori: '', umur: '' });
+            
+            setTimeout(() => {
+              setStatusBerjaya(false);
+            }, 3000);
+          };
+
+          return (
+            <div className="min-h-screen relative overflow-hidden flex flex-col items-center p-6">
+              <div className="absolute top-[-10%] left-[-10%] w-96 h-96 bg-blue-600/20 rounded-full blur-3xl pointer-events-none"></div>
+              <div className="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-purple-600/20 rounded-full blur-3xl pointer-events-none"></div>
+              
+              <div className="text-center mb-8 z-10 pt-8">
+                <div className="flex justify-center mb-4">
+                  <div className="bg-indigo-600 p-4 rounded-full shadow-lg shadow-indigo-500/50 animate-bounce">
+                    <Rocket className="w-8 h-8 text-white" />
+                  </div>
+                </div>
+                <h1 className="text-3xl md:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400">
+                  Sistem Kehadiran Digital
+                </h1>
+                <p className="text-slate-400 mt-2 text-lg">Misi Eksplorasi Balai Cerap Maya</p>
+              </div>
+
+              <div className="w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-8 z-10">
+                
+                <div className="bg-slate-800/50 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6 shadow-2xl">
+                  <h2 className="text-xl font-semibold mb-6 flex items-center border-b border-slate-700 pb-3">
+                    <User className="w-5 h-5 mr-2 text-blue-400" />
+                    Daftar Masuk
+                  </h2>
+
+                  {statusBerjaya && (
+                    <div className="bg-emerald-500/20 border border-emerald-500/50 text-emerald-400 p-4 rounded-lg mb-6 flex items-center">
+                      <CheckCircle2 className="w-5 h-5 mr-2" />
+                      Kehadiran berjaya direkodkan!
+                    </div>
+                  )}
+
+                  <form onSubmit={handleSubmit} className="space-y-5">
+                    <div>
+                      <label className="block text-sm font-medium text-slate-300 mb-1">Nama Penuh</label>
+                      <input
+                        type="text"
+                        name="nama"
+                        required
+                        value={formData.nama}
+                        onChange={handleChange}
+                        placeholder="Taip nama anda di sini..."
+                        className="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-slate-300 mb-1">Kategori</label>
+                      <div className="relative">
+                        <select
+                          name="kategori"
+                          required
+                          value={formData.kategori}
+                          onChange={handleChange}
+                          className="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                        >
+                          <option value="" disabled>-- Pilih Kategori --</option>
+                          <option value="Sekolah Rendah">Sekolah Rendah</option>
+                          <option value="Sekolah Menengah">Sekolah Menengah</option>
+                          <option value="Universiti">Universiti</option>
+                          <option value="Orang Awam">Orang Awam</option>
+                        </select>
+                        <ChevronDown className="absolute right-3 top-3.5 w-5 h-5 text-slate-400 pointer-events-none" />
+                      </div>
+                    </div>
+
+                    {formData.kategori === 'Sekolah Rendah' && (
+                      <div className="transition-all duration-300">
+                        <label className="block text-sm font-medium text-slate-300 mb-1 flex items-center">
+                          <School className="w-4 h-4 mr-1 text-yellow-400" /> Tahun
+                        </label>
+                        <div className="relative">
+                          <select name="subKategori" required value={formData.subKategori} onChange={handleChange} className="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all">
+                            <option value="" disabled>-- Pilih Tahun --</option>
+                            {pilihanRendah.map(tahun => <option key={tahun} value={tahun}>{tahun}</option>)}
+                          </select>
+                          <ChevronDown className="absolute right-3 top-3.5 w-5 h-5 text-slate-400 pointer-events-none" />
+                        </div>
+                      </div>
+                    )}
+
+                    {formData.kategori === 'Sekolah Menengah' && (
+                      <div className="transition-all duration-300">
+                        <label className="block text-sm font-medium text-slate-300 mb-1 flex items-center">
+                          <School className="w-4 h-4 mr-1 text-blue-400" /> Tingkatan
+                        </label>
+                        <div className="relative">
+                          <select name="subKategori" required value={formData.subKategori} onChange={handleChange} className="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all">
+                            <option value="" disabled>-- Pilih Tingkatan --</option>
+                            {pilihanMenengah.map(ting => <option key={ting} value={ting}>{ting}</option>)}
+                          </select>
+                          <ChevronDown className="absolute right-3 top-3.5 w-5 h-5 text-slate-400 pointer-events-none" />
+                        </div>
+                      </div>
+                    )}
+
+                    {formData.kategori === 'Universiti' && (
+                      <div className="transition-all duration-300">
+                        <label className="block text-sm font-medium text-slate-300 mb-1 flex items-center">
+                          <GraduationCap className="w-4 h-4 mr-1 text-purple-400" /> Peringkat Pengajian
+                        </label>
+                        <div className="relative">
+                          <select name="subKategori" required value={formData.subKategori} onChange={handleChange} className="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all">
+                            <option value="" disabled>-- Pilih Peringkat --</option>
+                            {pilihanUniversiti.map(peringkat => <option key={peringkat} value={peringkat}>{peringkat}</option>)}
+                          </select>
+                          <ChevronDown className="absolute right-3 top-3.5 w-5 h-5 text-slate-400 pointer-events-none" />
+                        </div>
+                      </div>
+                    )}
+
+                    {formData.kategori === 'Orang Awam' && (
+                      <div className="transition-all duration-300">
+                        <label className="block text-sm font-medium text-slate-300 mb-1 flex items-center">
+                          <Users className="w-4 h-4 mr-1 text-emerald-400" /> Umur
+                        </label>
+                        <input
+                          type="number" name="umur" required min="1" max="120"
+                          value={formData.umur} onChange={handleChange} placeholder="Masukkan umur anda..."
+                          className="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                        />
+                      </div>
+                    )}
+
+                    <button
+                      type="submit"
+                      className="w-full mt-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-semibold py-3 px-6 rounded-lg shadow-lg hover:shadow-indigo-500/25 transition-all duration-200 flex justify-center items-center group"
+                    >
+                      Hantar Kehadiran
+                      <Rocket className="w-5 h-5 ml-2 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                    </button>
+                  </form>
+                </div>
+
+                <div className="bg-slate-800/50 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6 shadow-2xl flex flex-col h-[500px]">
+                  <h2 className="text-xl font-semibold mb-6 flex items-center border-b border-slate-700 pb-3">
+                    <Users className="w-5 h-5 mr-2 text-purple-400" />
+                    Rekod Pelawat Misi ({senaraiKehadiran.length})
+                  </h2>
+                  
+                  <div className="flex-1 overflow-y-auto pr-2 space-y-3 custom-scrollbar">
+                    {senaraiKehadiran.length === 0 ? (
+                      <div className="h-full flex flex-col items-center justify-center text-slate-500">
+                        <div className="text-4xl mb-3">🛰️</div>
+                        <p>Belum ada pelawat direkodkan.</p>
+                      </div>
+                    ) : (
+                      senaraiKehadiran.map((rekod) => (
+                        <div key={rekod.id} className="bg-slate-900/80 border border-slate-700 rounded-lg p-4 hover:border-slate-500 transition-colors">
+                          <div className="flex justify-between items-start mb-1">
+                            <h3 className="font-semibold text-white">{rekod.nama}</h3>
+                            <span className="text-xs text-slate-400">{rekod.tarikhMasa.split(', ')[1]}</span>
+                          </div>
+                          <div className="flex items-center gap-2 mt-2">
+                            <span className={`text-xs px-2 py-1 rounded-full font-medium ${
+                              rekod.kategori === 'Sekolah Rendah' ? 'bg-yellow-500/20 text-yellow-300' :
+                              rekod.kategori === 'Sekolah Menengah' ? 'bg-blue-500/20 text-blue-300' :
+                              rekod.kategori === 'Universiti' ? 'bg-purple-500/20 text-purple-300' :
+                              'bg-emerald-500/20 text-emerald-300'
+                            }`}>
+                              {rekod.kategori}
+                            </span>
+                            <span className="text-xs text-slate-300 bg-slate-800 px-2 py-1 rounded-full border border-slate-700">
+                              {rekod.kategori === 'Orang Awam' ? `${rekod.umur} Tahun` : rekod.subKategori}
+                            </span>
+                          </div>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
