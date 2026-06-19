@@ -1,0 +1,291 @@
+import React, { useState } from 'react';
+import { Rocket, User, Users, GraduationCap, School, ChevronDown, CheckCircle2 } from 'lucide-react';
+
+export default function App() {
+  const [formData, setFormData] = useState({
+    nama: '',
+    kategori: '',
+    subKategori: '',
+    umur: ''
+  });
+
+  const [senaraiKehadiran, setSenaraiKehadiran] = useState([]);
+  const [statusBerjaya, setStatusBerjaya] = useState(false);
+
+  // Senarai Pilihan
+  const pilihanRendah = ["Tahun 1", "Tahun 2", "Tahun 3", "Tahun 4", "Tahun 5", "Tahun 6"];
+  const pilihanMenengah = ["Tingkatan 1", "Tingkatan 2", "Tingkatan 3", "Tingkatan 4", "Tingkatan 5"];
+  const pilihanUniversiti = ["Pra U", "Matriks", "Asasi", "Diploma", "Degree", "Master", "PhD"];
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    
+    // Jika tukar kategori, reset subKategori dan umur
+    if (name === 'kategori') {
+      setFormData({
+        ...formData,
+        kategori: value,
+        subKategori: '',
+        umur: ''
+      });
+    } else {
+      setFormData({
+        ...formData,
+        [name]: value
+      });
+    }
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    
+    // Dapatkan tarikh dan masa semasa
+    const masaSemasa = new Date().toLocaleString('ms-MY');
+
+    const rekodBaru = {
+      ...formData,
+      tarikhMasa: masaSemasa,
+      id: Date.now()
+    };
+
+    setSenaraiKehadiran([rekodBaru, ...senaraiKehadiran]);
+    
+    // Tunjuk mesej berjaya dan reset borang
+    setStatusBerjaya(true);
+    setFormData({ nama: '', kategori: '', subKategori: '', umur: '' });
+    
+    setTimeout(() => {
+      setStatusBerjaya(false);
+    }, 3000);
+  };
+
+  return (
+    <div className="min-h-screen bg-slate-900 text-slate-100 font-sans p-6 relative overflow-hidden flex flex-col items-center">
+      {/* Latar Belakang Angkasa - Hiasan CSS */}
+      <div className="absolute top-[-10%] left-[-10%] w-96 h-96 bg-blue-600/20 rounded-full blur-3xl pointer-events-none"></div>
+      <div className="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-purple-600/20 rounded-full blur-3xl pointer-events-none"></div>
+      
+      {/* Header */}
+      <div className="text-center mb-8 z-10 pt-8">
+        <div className="flex justify-center mb-4">
+          <div className="bg-indigo-600 p-4 rounded-full shadow-lg shadow-indigo-500/50 animate-bounce">
+            <Rocket className="w-8 h-8 text-white" />
+          </div>
+        </div>
+        <h1 className="text-3xl md:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400">
+          Sistem Kehadiran Digital
+        </h1>
+        <p className="text-slate-400 mt-2 text-lg">Misi Eksplorasi Balai Cerap Maya</p>
+      </div>
+
+      <div className="w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-8 z-10">
+        
+        {/* Kad Borang Kehadiran */}
+        <div className="bg-slate-800/50 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6 shadow-2xl">
+          <h2 className="text-xl font-semibold mb-6 flex items-center border-b border-slate-700 pb-3">
+            <User className="w-5 h-5 mr-2 text-blue-400" />
+            Daftar Masuk
+          </h2>
+
+          {statusBerjaya && (
+            <div className="bg-emerald-500/20 border border-emerald-500/50 text-emerald-400 p-4 rounded-lg mb-6 flex items-center">
+              <CheckCircle2 className="w-5 h-5 mr-2" />
+              Kehadiran berjaya direkodkan!
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="space-y-5">
+            {/* Nama Input */}
+            <div>
+              <label className="block text-sm font-medium text-slate-300 mb-1">Nama Penuh</label>
+              <input
+                type="text"
+                name="nama"
+                required
+                value={formData.nama}
+                onChange={handleChange}
+                placeholder="Taip nama anda di sini..."
+                className="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+              />
+            </div>
+
+            {/* Kategori Dropdown */}
+            <div>
+              <label className="block text-sm font-medium text-slate-300 mb-1">Kategori</label>
+              <div className="relative">
+                <select
+                  name="kategori"
+                  required
+                  value={formData.kategori}
+                  onChange={handleChange}
+                  className="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                >
+                  <option value="" disabled>-- Pilih Kategori --</option>
+                  <option value="Sekolah Rendah">Sekolah Rendah</option>
+                  <option value="Sekolah Menengah">Sekolah Menengah</option>
+                  <option value="Universiti">Universiti</option>
+                  <option value="Orang Awam">Orang Awam</option>
+                </select>
+                <ChevronDown className="absolute right-3 top-3.5 w-5 h-5 text-slate-400 pointer-events-none" />
+              </div>
+            </div>
+
+            {/* Sub-Kategori Dinamik */}
+            
+            {/* Logik: Sekolah Rendah */}
+            {formData.kategori === 'Sekolah Rendah' && (
+              <div className="animate-in fade-in slide-in-from-top-2 duration-300">
+                <label className="block text-sm font-medium text-slate-300 mb-1 flex items-center">
+                  <School className="w-4 h-4 mr-1 text-yellow-400" /> Tahun
+                </label>
+                <div className="relative">
+                  <select
+                    name="subKategori"
+                    required
+                    value={formData.subKategori}
+                    onChange={handleChange}
+                    className="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                  >
+                    <option value="" disabled>-- Pilih Tahun --</option>
+                    {pilihanRendah.map(tahun => <option key={tahun} value={tahun}>{tahun}</option>)}
+                  </select>
+                  <ChevronDown className="absolute right-3 top-3.5 w-5 h-5 text-slate-400 pointer-events-none" />
+                </div>
+              </div>
+            )}
+
+            {/* Logik: Sekolah Menengah */}
+            {formData.kategori === 'Sekolah Menengah' && (
+              <div className="animate-in fade-in slide-in-from-top-2 duration-300">
+                <label className="block text-sm font-medium text-slate-300 mb-1 flex items-center">
+                  <School className="w-4 h-4 mr-1 text-blue-400" /> Tingkatan
+                </label>
+                <div className="relative">
+                  <select
+                    name="subKategori"
+                    required
+                    value={formData.subKategori}
+                    onChange={handleChange}
+                    className="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                  >
+                    <option value="" disabled>-- Pilih Tingkatan --</option>
+                    {pilihanMenengah.map(ting => <option key={ting} value={ting}>{ting}</option>)}
+                  </select>
+                  <ChevronDown className="absolute right-3 top-3.5 w-5 h-5 text-slate-400 pointer-events-none" />
+                </div>
+              </div>
+            )}
+
+            {/* Logik: Universiti */}
+            {formData.kategori === 'Universiti' && (
+              <div className="animate-in fade-in slide-in-from-top-2 duration-300">
+                <label className="block text-sm font-medium text-slate-300 mb-1 flex items-center">
+                  <GraduationCap className="w-4 h-4 mr-1 text-purple-400" /> Peringkat Pengajian
+                </label>
+                <div className="relative">
+                  <select
+                    name="subKategori"
+                    required
+                    value={formData.subKategori}
+                    onChange={handleChange}
+                    className="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                  >
+                    <option value="" disabled>-- Pilih Peringkat --</option>
+                    {pilihanUniversiti.map(peringkat => <option key={peringkat} value={peringkat}>{peringkat}</option>)}
+                  </select>
+                  <ChevronDown className="absolute right-3 top-3.5 w-5 h-5 text-slate-400 pointer-events-none" />
+                </div>
+              </div>
+            )}
+
+            {/* Logik: Orang Awam */}
+            {formData.kategori === 'Orang Awam' && (
+              <div className="animate-in fade-in slide-in-from-top-2 duration-300">
+                <label className="block text-sm font-medium text-slate-300 mb-1 flex items-center">
+                  <Users className="w-4 h-4 mr-1 text-emerald-400" /> Umur
+                </label>
+                <input
+                  type="number"
+                  name="umur"
+                  required
+                  min="1"
+                  max="120"
+                  value={formData.umur}
+                  onChange={handleChange}
+                  placeholder="Masukkan umur anda..."
+                  className="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                />
+              </div>
+            )}
+
+            {/* Butang Hantar */}
+            <button
+              type="submit"
+              className="w-full mt-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-semibold py-3 px-6 rounded-lg shadow-lg hover:shadow-indigo-500/25 transition-all duration-200 flex justify-center items-center group"
+            >
+              Hantar Kehadiran
+              <Rocket className="w-5 h-5 ml-2 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+            </button>
+          </form>
+        </div>
+
+        {/* Kad Rekod Kehadiran */}
+        <div className="bg-slate-800/50 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6 shadow-2xl flex flex-col h-[500px]">
+          <h2 className="text-xl font-semibold mb-6 flex items-center border-b border-slate-700 pb-3">
+            <Users className="w-5 h-5 mr-2 text-purple-400" />
+            Rekod Pelawat Misi ({senaraiKehadiran.length})
+          </h2>
+          
+          <div className="flex-1 overflow-y-auto pr-2 space-y-3 custom-scrollbar">
+            {senaraiKehadiran.length === 0 ? (
+              <div className="h-full flex flex-col items-center justify-center text-slate-500">
+                <div className="text-4xl mb-3">🛰️</div>
+                <p>Belum ada pelawat direkodkan.</p>
+              </div>
+            ) : (
+              senaraiKehadiran.map((rekod) => (
+                <div key={rekod.id} className="bg-slate-900/80 border border-slate-700 rounded-lg p-4 hover:border-slate-500 transition-colors">
+                  <div className="flex justify-between items-start mb-1">
+                    <h3 className="font-semibold text-white">{rekod.nama}</h3>
+                    <span className="text-xs text-slate-400">{rekod.tarikhMasa.split(', ')[1]}</span>
+                  </div>
+                  <div className="flex items-center gap-2 mt-2">
+                    <span className={`text-xs px-2 py-1 rounded-full font-medium ${
+                      rekod.kategori === 'Sekolah Rendah' ? 'bg-yellow-500/20 text-yellow-300' :
+                      rekod.kategori === 'Sekolah Menengah' ? 'bg-blue-500/20 text-blue-300' :
+                      rekod.kategori === 'Universiti' ? 'bg-purple-500/20 text-purple-300' :
+                      'bg-emerald-500/20 text-emerald-300'
+                    }`}>
+                      {rekod.kategori}
+                    </span>
+                    <span className="text-xs text-slate-300 bg-slate-800 px-2 py-1 rounded-full border border-slate-700">
+                      {rekod.kategori === 'Orang Awam' ? `${rekod.umur} Tahun` : rekod.subKategori}
+                    </span>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+
+      </div>
+
+      <style>{`
+        .custom-scrollbar::-webkit-scrollbar {
+          width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: rgba(30, 41, 59, 0.5); 
+          border-radius: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: rgba(71, 85, 105, 0.8); 
+          border-radius: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: rgba(100, 116, 139, 1); 
+        }
+      `}</style>
+    </div>
+  );
+}
